@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 
+import { aliasesOf, type Alias, type Link as WorkLink, type Work } from "@/types/works";
+
 const LENS = {
   CELL: 46,
   RADIUS: 330,
@@ -10,89 +12,9 @@ const LENS = {
   EASE: 0.12
 }
 
-const svgURI = (s) => "data:image/svg+xml;utf8," + encodeURIComponent(s);
+type Accent = { dark: string; light: string };
 
-const musicCover = (w, h, a, b, mark) => svgURI(`
-  <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-    <defs>
-      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/>
-      </linearGradient>
-    </defs>
-    <rect width="${w}" height="${h}" fill="url(#g)"/>
-    ${Array.from({ length: 9 }, (_, i) =>
-      `<circle cx="${w * 0.5}" cy="${h * 0.52}" r="${(Math.min(w, h) * 0.07) * (i + 1)}" fill="none" stroke="rgba(255,255,255,${0.26 - i * 0.024})" stroke-width="1.6"/>`
-    ).join("")}
-    <text x="${w * 0.06}" y="${h * 0.92}" font-family="monospace" font-size="${Math.min(w, h) * 0.075}" letter-spacing="${Math.min(w, h) * 0.02}" fill="rgba(255,255,255,0.82)">${mark}</text>
-  </svg>
-`);
-
-const eventCover = (w, h, a, b, mark) => svgURI(`
-  <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-    <defs>
-      <linearGradient id="g" x1="0" y1="1" x2="1" y2="0">
-        <stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/>
-      </linearGradient>
-    </defs>
-    <rect width="${w}" height="${h}" fill="url(#g)"/>
-    ${Array.from({ length: 26 }, (_, i) => {
-      const bh = (0.12 + Math.abs(Math.sin(i * 1.7)) * 0.6) * h;
-      return `<rect x="${(i / 26) * w + w * 0.006}" y="${h - bh - h * 0.16}" width="${w / 26 - w * 0.012}" height="${bh}" fill="rgba(255,255,255,${0.1 + (i % 4) * 0.05})"/>`;
-    }).join("")}
-    <text x="${w * 0.06}" y="${h * 0.93}" font-family="monospace" font-size="${Math.min(w, h) * 0.075}" letter-spacing="${Math.min(w, h) * 0.02}" fill="rgba(255,255,255,0.82)">${mark}</text>
-  </svg>
-`);
-
-const devCover = (w, h, a, b, mark) => svgURI(`
-  <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-    <defs>
-      <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/>
-      </linearGradient>
-      <pattern id="p" width="${w / 14}" height="${w / 14}" patternUnits="userSpaceOnUse">
-        <path d="M ${w / 14} 0 L 0 0 0 ${w / 14}" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
-      </pattern>
-    </defs>
-    <rect width="${w}" height="${h}" fill="url(#g)"/>
-    <rect width="${w}" height="${h}" fill="url(#p)"/>
-    <rect x="${w * 0.5 - Math.min(w, h) * 0.17}" y="${h * 0.5 - Math.min(w, h) * 0.17}" width="${Math.min(w, h) * 0.34}" height="${Math.min(w, h) * 0.34}" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
-    <text x="${w * 0.06}" y="${h * 0.93}" font-family="monospace" font-size="${Math.min(w, h) * 0.075}" letter-spacing="${Math.min(w, h) * 0.02}" fill="rgba(255,255,255,0.85)">${mark}</text>
-  </svg>
-`);
-
-const otherCover = (w, h, a, b, mark) => svgURI(`
-  <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-    <defs>
-      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/>
-      </linearGradient>
-    </defs>
-    <rect width="${w}" height="${h}" fill="url(#g)"/>
-    ${Array.from({ length: 14 }, (_, i) => {
-      const y = (i + 0.5) * (h / 14);
-      const x2 = w * (0.18 + Math.abs(Math.sin(i * 2.1)) * 0.62);
-      return `<rect x="${w * 0.12}" y="${y}" width="${x2}" height="${h * 0.012}" fill="rgba(255,255,255,${0.08 + (i % 3) * 0.06})"/>`;
-    }).join("")}
-    <text x="${w * 0.06}" y="${h * 0.93}" font-family="monospace" font-size="${Math.min(w, h) * 0.075}" letter-spacing="${Math.min(w, h) * 0.02}" fill="rgba(255,255,255,0.85)">${mark}</text>
-  </svg>
-`);
-
-/* ------------------------------------------------------------
-   名義マスタ。
-   id が安定キー（microCMS の contentId に対応）。
-   name は表示用で、改名時はここだけ書き換える。
-   作品側は必ず id で参照し、表示名で引かないこと。
-   ------------------------------------------------------------ */
-const ALIASES = [
-  { id: "gvku",   name: "GVKU",    dark: "#9D8CFF", light: "#5B45D6", order: 1 },
-  { id: "fanion", name: "fanion.", dark: "#FF8065", light: "#C0442A", order: 2 },
-  { id: "yugaku", name: "yugaku",  dark: "#7ED8F0", light: "#0F7B9E", order: 3 },
-];
-
-const ALIAS_BY_ID = Object.fromEntries(ALIASES.map((a) => [a.id, a]));
-const aliasName = (id) => ALIAS_BY_ID[id]?.name ?? "";
-
-const KIND_COLOR = {
+const KIND_COLOR: Record<string, Accent> = {
   all:         { dark: "#9FB4CE", light: "#4E5F76" },
   music:       { dark: "#8FA6C4", light: "#41597A" },
   event:       { dark: "#E8B44C", light: "#8F6404" },
@@ -100,14 +22,14 @@ const KIND_COLOR = {
   other:       { dark: "#C7B9A6", light: "#7A6752" },
 };
 
-const KIND_LABEL = {
+const KIND_LABEL: Record<Work["kind"], string> = {
   music:       "MUSIC",
   event:       "LIVE / EVENT",
   development: "DEVELOP",
   other:       "OTHER",
 };
 
-const KIND_CHIPS = [
+const KIND_CHIPS: [string, string][] = [
   ["all", "ALL"],
   ["music", "MUSIC"],
   ["event", "LIVE / EVENT"],
@@ -116,148 +38,49 @@ const KIND_CHIPS = [
 ];
 
 /** 対応表に無いキーが来ても落ちないよう、既定色にフォールバックする */
-const FALLBACK = { dark: "#9FB4CE", light: "#4E5F76" };
-const pick = (entry, light) => (entry ?? FALLBACK)[light ? "light" : "dark"];
+const FALLBACK: Accent = { dark: "#9FB4CE", light: "#4E5F76" };
+const pick = (entry: Accent | null | undefined, light: boolean) =>
+  (entry ?? FALLBACK)[light ? "light" : "dark"];
 
-/** 作品に紐づく名義ID。種別ごとの持ち方の違いをここで吸収する */
-const aliasIdsOf = (work) =>
-  work.kind === "music" ? [work.aliasId] : (work.aliasIds ?? []);
+/** 名義のアクセント色は microCMS の colorDark / colorLight をそのまま使う */
+const aliasAccent = (a: Alias | null | undefined): Accent | null =>
+  a ? { dark: a.colorDark, light: a.colorLight } : null;
 
 /** その作品のアクセント色。音源は名義の色、それ以外はカテゴリの色 */
-const accentOf = (work, light) =>
-  pick(work.kind === "music" ? ALIAS_BY_ID[work.aliasId] : KIND_COLOR[work.kind], light);
+const accentOf = (work: Work, light: boolean) =>
+  pick(
+    work.kind === "music" ? aliasAccent(work.alias) : KIND_COLOR[work.kind],
+    light,
+  );
 
-const WORKS = [
-  {
-    id: "none-01", kind: "music", title: "None", date: "2027-01-01",
-    aliasId: "gvku", format: "Single", label: "None Records", catalog: "NON-001",
-    cover: musicCover(900, 900, "#351461", "#2e635e", "GV / SGL"),
-    body: "Body field",
-    links: [
-      { label: "Spotify", url: "#" },
-      { label: "Apple Music", url: "#" },
-      { label: "Bandcamp", url: "#" },
-    ],
-  },
-  {
-    id: "none-02", kind: "music", title: "None", date: "2028-01-01",
-    aliasId: "fanion", format: "Album", label: "self-released", catalog: "NON-002",
-    cover: musicCover(900, 900, "#e05353", "#071018", "FAN / LP"),
-    body: "Body field",
-    links: [
-      { label: "Spotify", url: "#" },
-      { label: "Apple Music", url: "#" },
-      { label: "Bandcamp", url: "#" }
-    ],
-  },
-  {
-    id: "none-03", kind: "music", title: "None", date: "2029-01-01",
-    aliasId: "yugaku", format: "EP", label: "Unknown Records", catalog: "NON-003",
-    cover: musicCover(900, 900, "#5992b3", "#b2c0b8", "YGK / EP"),
-    body: "Body field",
-    links: [
-      { label: "Spotify", url: "#" },
-      { label: "Apple Music", url: "#" },
-      { label: "Bandcamp", url: "#" }
-    ],
-  },
-  {
-    id: "synth-frontier-7", kind: "event", title: "SYNTH FRONTIER vol.7", date: "2026-03-14",
-    role: "出演", venue: "福岡 / STEREO HALL", aliasIds: ["gvku"],
-    cover: eventCover(900, 900, "#5A3F10", "#17110A", "LIVE / 2026"),
-    body: "Body field",
-    links: [
-      { label: "イベント詳細", url: "#" },
-      { label: "アーカイブ", url: "#" }
-    ],
-  },
-  {
-    id: "denshi-yakai-12", kind: "event", title: "電子音楽夜会 #12", date: "2025-10-25",
-    role: "主催", venue: "福岡 / BASE-9", aliasIds: ["fanion", "yugaku"],
-    cover: eventCover(900, 900, "#4A3A14", "#141008", "HOST / 2025"),
-    body: "Body field",
-    links: [
-      { label: "イベントページ", url: "#" },
-      { label: "レポート", url: "#" }
-    ],
-  },
-  {
-    id: "crystalline-party", kind: "event", title: "Lattice release party", date: "2025-07-06",
-    role: "主催 / 出演", venue: "福岡 / OTO GALLERY", aliasIds: ["yugaku"],
-    cover: eventCover(1920, 1080, "#3E3416", "#12100A", "REL / 2025"),
-    note: "Note field",
-    body: "Body field",
-    links: [
-      { label: "写真", url: "#" },
-      { label: "インスタレーション解説", url: "#" }
-    ],
-  },
-  {
-    id: "resobus", kind: "development", title: "ResoBus", date: "2026-01-10",
-    format: "VST3 / AU プラグイン", stack: ["C++17", "JUCE", "CMake"],
-    cover: devCover(900, 900, "#0F4034", "#07130F", "VST3"),
-    body: "Body field",
-    links: [
-      { label: "ダウンロード", url: "#" },
-      { label: "GitHub", url: "#" },
-      { label: "ドキュメント", url: "#" }
-    ],
-  },
-  {
-    id: "wasm-wav", kind: "development", title: "wasm-wav", date: "2025-12-01",
-    format: "Web アプリケーション", stack: ["Rust", "WebAssembly", "TypeScript"],
-    cover: devCover(900, 900, "#0C3A3E", "#071214", "WASM"),
-    body: "Body field",
-    links: [
-      { label: "アプリを開く", url: "#" },
-      { label: "GitHub", url: "#" }
-    ],
-  },
-  {
-    id: "midiroutekit", kind: "development", title: "MidiRouteKit", date: "2025-05-20",
-    format: "ミドルウェア / ライブラリ", stack: ["C++17", "CMake", "RtMidi"],
-    cover: devCover(1200, 800, "#134037", "#08140F", "LIB"),
-    note: "Note field",
-    body: "Body field",
-    links: [
-      { label: "GitHub", url: "#" },
-      { label: "APIリファレンス", url: "#" }
-    ],
-  },
-  {
-    id: "other-01", kind: "other", title: "None", date: "2026-06-20",
-    category: "寄稿・執筆", partner: "None Magazine", aliasIds: [],
-    summary: "Summary field",
-    cover: otherCover(900, 900, "#3A3630", "#14120F", "TEXT"),
-    body: "Body field",
-    links: [
-      { label: "記事", url: "#" }
-    ],
-  },
-  {
-    id: "other-02", kind: "other", title: "None", date: "2025-09-02",
-    category: "楽曲提供", partner: "None Project", aliasIds: ["gvku"],
-    summary: "Summary field",
-    cover: otherCover(1400, 900, "#45392C", "#17120D", "PROV"),
-    note: "Note field",
-    body: "Body field",
-    links: [
-      { label: "公式サイト", url: "#" },
-      { label: "試聴", url: "#" }
-    ],
-  },
-];
+/** セレクトフィールドは単一選択でも配列で返る */
+const sel = (v: string[] | undefined) => v?.[0] ?? "";
+const selJoin = (v: string[] | undefined, glue = " / ") => (v ?? []).join(glue);
+
+/** microCMS の日時は ISO 文字列。表示は YYYY-MM-DD に切る */
+const fmtDate = (iso: string | undefined) => (iso ? iso.slice(0, 10) : "");
+
+/** リンクの表示名。label が空なら platform をそのまま出す */
+const linkLabel = (l: WorkLink) => l.label?.trim() || sel(l.platform);
+
+const svgURI = (s: string) => "data:image/svg+xml;utf8," + encodeURIComponent(s);
+
+/** cover 未設定でもカード全体が崩れないよう、無地のプレースホルダを返す */
+const PLACEHOLDER = svgURI(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="#141A22"/></svg>`,
+);
 
 /* ============================================================
    Background: grid with a cursor lens
    ============================================================ */
-function LensGrid({ light }) {
-  const canvasRef = useRef(null);
+function LensGrid({ light }: { light: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
     const { CELL, RADIUS, AMOUNT, STEP, EASE } = LENS;
 
     const LINE = light ? "rgba(60,92,132,0.16)" : "rgba(150,178,214,0.10)";
@@ -285,7 +108,7 @@ function LensGrid({ light }) {
 
     // radial magnification: f(d) = d * (1 + A(1-u)^2), u = d/R
     // f(R) = R keeps the boundary seamless; monotonic while A < 3, so lines never fold
-    const warp = (px, py) => {
+    const warp = (px: number, py: number): [number, number] => {
       const dx = px - cx, dy = py - cy;
       const d = Math.hypot(dx, dy);
       if (d >= RADIUS || d === 0) return [px, py];
@@ -380,7 +203,7 @@ function LensGrid({ light }) {
       raf = requestAnimationFrame(tick);
     };
 
-    const onMove = (e) => { pointerSeen = true; tx = e.clientX; ty = e.clientY; };
+    const onMove = (e: PointerEvent) => { pointerSeen = true; tx = e.clientX; ty = e.clientY; };
     const onLeave = () => { pointerSeen = false; };
     const onResize = () => { resize(); draw(); };
 
@@ -408,11 +231,13 @@ function LensGrid({ light }) {
 /* ============================================================
    1:1 cover — non-square sources get a blurred self-fill
    ============================================================ */
-function SquareCover({ src, alt }) {
+function SquareCover({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="gf-cover">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt="" aria-hidden="true" className="gf-cover-bg" />
       <div className="gf-cover-scrim" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={alt} className="gf-cover-img" />
     </div>
   );
@@ -421,29 +246,35 @@ function SquareCover({ src, alt }) {
 /* ============================================================
    Card
    ============================================================ */
-function WorkCard({ work, light, onOpen }) {
+function WorkCard({ work, light, onOpen }: {
+  work: Work;
+  light: boolean;
+  onOpen: (w: Work) => void;
+}) {
   const accent = accentOf(work, light);
+  const cover = work.cover?.url ?? PLACEHOLDER;
 
   const sub =
-    work.kind === "music"       ? aliasName(work.aliasId) :
-    work.kind === "event"       ? work.venue :
-    work.kind === "development" ? work.format :
-    work.kind === "other"       ? work.category :
+    work.kind === "music"       ? (work.alias?.name ?? "") :
+    work.kind === "event"       ? [work.area, work.venue].filter(Boolean).join(" / ") :
+    work.kind === "development" ? sel(work.category) :
+    work.kind === "other"       ? sel(work.category) :
     "";
 
   const meta =
-    work.kind === "music"       ? `${work.label} · ${work.catalog}` :
-    work.kind === "event"       ? work.role :
-    work.kind === "development" ? work.stack.join(" / ") :
+    work.kind === "music"       ? [work.label?.trim() || "self-released", work.catalog].filter(Boolean).join(" · ") :
+    work.kind === "event"       ? sel(work.role) :
+    work.kind === "development" ? selJoin(work.stack) :
     work.kind === "other"       ? (work.partner ?? "") :
     "";
 
   return (
-    <button className="gf-card" style={{ "--accent": accent }} onClick={() => onOpen(work)}
+    <button className="gf-card" style={{ "--accent": accent } as React.CSSProperties} onClick={() => onOpen(work)}
       aria-label={`${work.title} の詳細を開く`}>
       <div className="gf-card-frame">
-        <img src={work.cover} alt="" aria-hidden="true" className="gf-halo" />
-        <SquareCover src={work.cover} alt={`${work.title} のカバー`} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={cover} alt="" aria-hidden="true" className="gf-halo" />
+        <SquareCover src={cover} alt={`${work.title} のカバー`} />
         <span className="gf-kind">{KIND_LABEL[work.kind]}</span>
       </div>
       <div className="gf-card-text">
@@ -458,11 +289,15 @@ function WorkCard({ work, light, onOpen }) {
 /* ============================================================
    Detail panel
    ============================================================ */
-function DetailPanel({ work, light, onClose }) {
-  const closeRef = useRef(null);
+function DetailPanel({ work, light, onClose }: {
+  work: Work;
+  light: boolean;
+  onClose: () => void;
+}) {
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
     closeRef.current?.focus();
     const prev = document.body.style.overflow;
@@ -473,43 +308,62 @@ function DetailPanel({ work, light, onClose }) {
     };
   }, [onClose]);
 
-  if (!work) return null;
   const accent = accentOf(work, light);
-  const names = aliasIdsOf(work).map(aliasName).filter(Boolean).join(" / ");
+  const cover = work.cover?.url ?? PLACEHOLDER;
+  const names = aliasesOf(work).map((a) => a.name).join(" / ");
 
-  const rows =
+  // カバー下の小文字欄。音源はクレジット、イベントは共演。
+  const note =
+    work.kind === "music" ? work.credits :
+    work.kind === "event" ? work.lineup :
+    undefined;
+
+  // 本文が空なら一行説明を出す（development / other は summary が必須）
+  const lead =
+    work.body?.trim() ||
+    (work.kind === "development" || work.kind === "other" ? work.summary : "");
+
+  const rows: [string, string][] =
     work.kind === "music"
-      ? [["名義", aliasName(work.aliasId)], ["形態", work.format], ["レーベル", work.label], ["品番", work.catalog], ["リリース", work.date]]
+      ? [["名義", work.alias?.name ?? ""], ["形態", selJoin(work.format, ", ")], ["レーベル", work.label ?? ""],
+         ["品番", work.catalog ?? ""], ["収録曲数", work.trackCount ? String(work.trackCount) : ""],
+         ["リリース", fmtDate(work.date)]]
       : work.kind === "event"
-        ? [["区分", work.role], ["会場", work.venue], ["出演名義", names], ["開催日", work.date]]
+        ? [["区分", selJoin(work.role, ", ")], ["会場", work.venue], ["エリア", work.area],
+           ["出演名義", names],
+           ["開催日", [fmtDate(work.date), fmtDate(work.endDate)].filter(Boolean).join(" – ")]]
         : work.kind === "development"
-          ? [["種別", work.format], ["技術", work.stack.join(", ")], ["公開", work.date]]
+          ? [["種別", selJoin(work.category, ", ")], ["技術", selJoin(work.stack, ", ")],
+             ["動作環境", selJoin(work.platform, ", ")], ["状態", selJoin(work.status, ", ")],
+             ["バージョン", work.version ?? ""], ["公開", fmtDate(work.date)]]
           : work.kind === "other"
-            ? [["区分", work.category], ["相手先", work.partner], ["関連名義", names], ["日付", work.date]]
+            ? [["区分", selJoin(work.category, ", ")], ["相手先", work.partner ?? ""],
+               ["関連名義", names], ["日付", fmtDate(work.date)]]
             : [];
 
   return (
     <div className="gf-overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <article className="gf-panel" style={{ "--accent": accent }} role="dialog" aria-modal="true" aria-label={work.title}>
+      <article className="gf-panel" style={{ "--accent": accent } as React.CSSProperties} role="dialog" aria-modal="true" aria-label={work.title}>
         <button ref={closeRef} className="gf-close" onClick={onClose} aria-label="閉じる">✕</button>
         <div className="gf-panel-grid">
           <div className="gf-panel-cover">
-            <SquareCover src={work.cover} alt={`${work.title} のカバー`} />
-            {work.note && <p className="gf-note">{work.note}</p>}
+            <SquareCover src={cover} alt={`${work.title} のカバー`} />
+            {note && <p className="gf-note">{note}</p>}
           </div>
           <div className="gf-panel-body">
             <span className="gf-kind is-static">{KIND_LABEL[work.kind]}</span>
             <h2 className="gf-panel-title">{work.title}</h2>
-            <p className="gf-panel-lead">{work.body}</p>
+            {/* body はリッチエディタの HTML 文字列。summary のときは素のテキスト */}
+            <div className="gf-panel-lead" dangerouslySetInnerHTML={{ __html: lead }} />
             <dl className="gf-spec">
               {rows.filter(([, v]) => v).map(([k, v]) => (
                 <div key={k} className="gf-spec-row"><dt>{k}</dt><dd>{v}</dd></div>
               ))}
             </dl>
             <div className="gf-links">
-              {work.links.map((l) => (
-                <a key={l.label} href={l.url} className="gf-link" onClick={(e) => e.preventDefault()}>
-                  {l.label}<span aria-hidden="true"> ↗</span>
+              {(work.links ?? []).map((l, i) => (
+                <a key={`${l.url}-${i}`} href={l.url} className="gf-link" target="_blank" rel="noreferrer noopener">
+                  {linkLabel(l)}<span aria-hidden="true"> ↗</span>
                 </a>
               ))}
             </div>
@@ -521,35 +375,38 @@ function DetailPanel({ work, light, onClose }) {
 }
 
 /* ============================================================
-   Page
+   View
    ============================================================ */
-export default function WorksPage() {
+export default function WorksView({ works, aliases }: { works: Work[]; aliases: Alias[] }) {
   const [light, setLight] = useState(false);
   const [kind, setKind] = useState("all");
   const [alias, setAlias] = useState("all");   // 名義の contentId、または "all"
   const [q, setQ] = useState("");
   const [sort, setSort] = useState("new");
-  const [open, setOpen] = useState(null);
+  const [open, setOpen] = useState<Work | null>(null);
 
   const list = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    const out = WORKS.filter((w) => {
+    const out = works.filter((w) => {
       if (kind !== "all" && w.kind !== kind) return false;
-      if (alias !== "all" && !aliasIdsOf(w).includes(alias)) return false;
+      // 名義は contentId で突き合わせる。表示名は改名されうるため使わない。
+      if (alias !== "all" && !aliasesOf(w).some((a) => a.id === alias)) return false;
       if (!needle) return true;
       const hay = [
-        w.title, w.label, w.catalog, w.venue, w.role, w.format, w.category,
-        w.partner, w.summary,
-        ...aliasIdsOf(w).map(aliasName),
-        ...(w.stack || []),
-      ].filter(Boolean).join(" ").toLowerCase();
+        w.title,
+        w.kind === "music" ? [w.label, w.catalog, selJoin(w.format)] : [],
+        w.kind === "event" ? [w.venue, w.area, selJoin(w.role), w.lineup] : [],
+        w.kind === "development" ? [selJoin(w.category), selJoin(w.stack), selJoin(w.platform), w.summary] : [],
+        w.kind === "other" ? [selJoin(w.category), w.partner, w.summary] : [],
+        ...aliasesOf(w).map((a) => a.name),
+      ].flat().filter(Boolean).join(" ").toLowerCase();
       return hay.includes(needle);
     });
     return [...out].sort((a, b) =>
       sort === "new" ? b.date.localeCompare(a.date)
         : sort === "old" ? a.date.localeCompare(b.date)
           : a.title.localeCompare(b.title, "ja"));
-  }, [kind, alias, q, sort]);
+  }, [works, kind, alias, q, sort]);
 
   const reset = useCallback(() => { setKind("all"); setAlias("all"); setQ(""); }, []);
 
@@ -578,18 +435,18 @@ export default function WorksPage() {
           <div className="gf-chips" role="group" aria-label="カテゴリ">
             {KIND_CHIPS.map(([v, l]) => (
               <button key={v} className={"gf-chip" + (kind === v ? " is-on" : "")}
-                style={{ "--accent": pick(KIND_COLOR[v], light) }}
+                style={{ "--accent": pick(KIND_COLOR[v], light) } as React.CSSProperties}
                 onClick={() => setKind(v)} aria-pressed={kind === v}>{l}</button>
             ))}
           </div>
 
           <div className="gf-chips gf-chips-alias" role="group" aria-label="名義">
             <button className={"gf-chip is-alias" + (alias === "all" ? " is-on" : "")}
-              style={{ "--accent": pick(KIND_COLOR.all, light) }}
+              style={{ "--accent": pick(KIND_COLOR.all, light) } as React.CSSProperties}
               onClick={() => setAlias("all")} aria-pressed={alias === "all"}>名義すべて</button>
-            {ALIASES.map((a) => (
+            {aliases.map((a) => (
               <button key={a.id} className={"gf-chip is-alias" + (alias === a.id ? " is-on" : "")}
-                style={{ "--accent": pick(a, light) }}
+                style={{ "--accent": pick(aliasAccent(a), light) } as React.CSSProperties}
                 onClick={() => setAlias(a.id)} aria-pressed={alias === a.id}>
                 <i className="gf-dot" />{a.name}
               </button>
@@ -610,8 +467,8 @@ export default function WorksPage() {
 
         {list.length === 0 ? (
           <div className="gf-empty">
-            <p>条件に一致する作品はありません。</p>
-            <button className="gf-reset" onClick={reset}>フィルターを外す</button>
+            <p>{works.length === 0 ? "まだ作品が登録されていません。" : "条件に一致する作品はありません。"}</p>
+            {works.length > 0 && <button className="gf-reset" onClick={reset}>フィルターを外す</button>}
           </div>
         ) : (
           <div className="gf-list">
@@ -620,7 +477,7 @@ export default function WorksPage() {
         )}
 
         <footer className="gf-foot">
-          掲載中の画像・テキストはすべてレイアウト確認用のダミーです。本番では microCMS から配信します。
+          掲載内容は microCMS から配信しています。
         </footer>
       </div>
 
