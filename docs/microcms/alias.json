@@ -1,0 +1,59 @@
+{
+  "apiFields": [
+    {
+      "fieldId": "name",
+      "name": "名義",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "nameEn",
+      "name": "英字表記",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "colorDark",
+      "name": "アクセント色（ダーク）",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "colorLight",
+      "name": "アクセント色（ライト）",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "bio",
+      "name": "紹介文",
+      "kind": "textArea",
+      "required": false
+    },
+    {
+      "fieldId": "image",
+      "name": "イメージ",
+      "kind": "media",
+      "required": false
+    },
+    {
+      "fieldId": "siteUrl",
+      "name": "個別サイト",
+      "kind": "text",
+      "required": false
+    },
+    {
+      "fieldId": "active",
+      "name": "現在も活動中",
+      "kind": "boolean",
+      "required": true
+    },
+    {
+      "fieldId": "order",
+      "name": "表示順",
+      "kind": "number",
+      "required": true
+    }
+  ],
+  "customFields": []
+}

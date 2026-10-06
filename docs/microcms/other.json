@@ -1,0 +1,204 @@
+{
+  "apiFields": [
+    {
+      "fieldId": "title",
+      "name": "タイトル",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "category",
+      "name": "区分",
+      "kind": "select",
+      "required": true,
+      "selectItems": [
+        {
+          "id": "nwnla6hrhi",
+          "value": "寄稿・執筆"
+        },
+        {
+          "id": "qheqzxwbb1",
+          "value": "インタビュー"
+        },
+        {
+          "id": "a7e5pbdrsi",
+          "value": "楽曲提供"
+        },
+        {
+          "id": "szhqy6dj28",
+          "value": "デザイン"
+        },
+        {
+          "id": "av16cc4ptp",
+          "value": "映像"
+        },
+        {
+          "id": "132denvulj",
+          "value": "機材・制作環境"
+        },
+        {
+          "id": "x9p31c72iy",
+          "value": "その他"
+        }
+      ],
+      "multipleSelect": false
+    },
+    {
+      "fieldId": "date",
+      "name": "日付",
+      "kind": "date",
+      "required": true
+    },
+    {
+      "fieldId": "cover",
+      "name": "イメージ",
+      "kind": "media",
+      "required": true
+    },
+    {
+      "fieldId": "partner",
+      "name": "相手先・媒体",
+      "kind": "text",
+      "required": false
+    },
+    {
+      "fieldId": "alias",
+      "name": "関連名義",
+      "kind": "relationList",
+      "required": false,
+      "referencedApiEndpoint": "alias",
+      "listViewFieldId": "name"
+    },
+    {
+      "fieldId": "summary",
+      "name": "一行説明",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "body",
+      "name": "詳細",
+      "kind": "richEditorV2",
+      "required": false
+    },
+    {
+      "fieldId": "links",
+      "name": "リンク",
+      "kind": "repeater",
+      "required": false,
+      "customFieldIds": [
+        "link"
+      ]
+    },
+    {
+      "fieldId": "featured",
+      "name": "ピックアップ",
+      "kind": "boolean",
+      "required": false
+    }
+  ],
+  "customFields": [
+    {
+      "fieldId": "link",
+      "name": "リンク",
+      "fields": [
+        {
+          "fieldId": "platform",
+          "name": "種別",
+          "kind": "select",
+          "required": true,
+          "selectItems": [
+            {
+              "id": "6w4cgecmt6",
+              "value": "Spotify"
+            },
+            {
+              "id": "99ycvf3rqw",
+              "value": "Apple Music"
+            },
+            {
+              "id": "lgjsu8ipy7",
+              "value": "Bandcamp"
+            },
+            {
+              "id": "cabqgz42re",
+              "value": "YouTube"
+            },
+            {
+              "id": "yi4mwfbf7f",
+              "value": "YouTube Music"
+            },
+            {
+              "id": "u38xianayo",
+              "value": "SoundCloud"
+            },
+            {
+              "id": "7x6020adf9",
+              "value": "Beatport"
+            },
+            {
+              "id": "jr81oww0e2",
+              "value": "LINE MUSIC"
+            },
+            {
+              "id": "5bhzu1ynpb",
+              "value": "ダウンロード"
+            },
+            {
+              "id": "mcs20flexa",
+              "value": "GitHub"
+            },
+            {
+              "id": "hf447z84hk",
+              "value": "ドキュメント"
+            },
+            {
+              "id": "puns1cvl1g",
+              "value": "デモ"
+            },
+            {
+              "id": "93726jknje",
+              "value": "イベントページ"
+            },
+            {
+              "id": "6xejikbzu3",
+              "value": "記事"
+            },
+            {
+              "id": "tbrhrklkwl",
+              "value": "写真"
+            },
+            {
+              "id": "gqprxamtnc",
+              "value": "公式サイト"
+            },
+            {
+              "id": "5ydsvpxys8",
+              "value": "その他"
+            }
+          ],
+          "multipleSelect": false
+        },
+        {
+          "fieldId": "url",
+          "name": "URL",
+          "kind": "text",
+          "required": true
+        },
+        {
+          "fieldId": "label",
+          "name": "表示名の上書き",
+          "kind": "text",
+          "required": false
+        }
+      ],
+      "fieldOrderByColumn": [
+        [
+          "platform",
+          "url",
+          "label"
+        ]
+      ]
+    }
+  ]
+}
