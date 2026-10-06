@@ -1,0 +1,327 @@
+{
+  "apiFields": [
+    {
+      "fieldId": "title",
+      "name": "名称",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "category",
+      "name": "種別",
+      "kind": "select",
+      "required": true,
+      "selectItems": [
+        {
+          "id": "uma1byn90h",
+          "value": "プラグイン"
+        },
+        {
+          "id": "ajevd7w1kt",
+          "value": "ミドルウェア"
+        },
+        {
+          "id": "dwyw9pvx5i",
+          "value": "ライブラリ"
+        },
+        {
+          "id": "0umplyjdun",
+          "value": "Webアプリ"
+        },
+        {
+          "id": "neamrbpxwi",
+          "value": "ツール"
+        },
+        {
+          "id": "2he8lzoul7",
+          "value": "その他"
+        }
+      ],
+      "multipleSelect": false
+    },
+    {
+      "fieldId": "date",
+      "name": "公開日",
+      "kind": "date",
+      "required": true
+    },
+    {
+      "fieldId": "cover",
+      "name": "イメージ",
+      "kind": "media",
+      "required": true
+    },
+    {
+      "fieldId": "stack",
+      "name": "技術",
+      "kind": "select",
+      "required": true,
+      "selectItems": [
+        {
+          "id": "7gm4cd8xs2",
+          "value": "C"
+        },
+        {
+          "id": "6l3ol56l2d",
+          "value": "C++"
+        },
+        {
+          "id": "rtvsgd3lxc",
+          "value": "C++17"
+        },
+        {
+          "id": "phktxa7pzc",
+          "value": "C++20"
+        },
+        {
+          "id": "kumo71lqi7",
+          "value": "Rust"
+        },
+        {
+          "id": "sezjpomgls",
+          "value": "TypeScript"
+        },
+        {
+          "id": "foi6lbao4j",
+          "value": "JavaScript"
+        },
+        {
+          "id": "6z4bdum7pa",
+          "value": "Python"
+        },
+        {
+          "id": "2i9cspww19",
+          "value": "JUCE"
+        },
+        {
+          "id": "8mdowx2ptj",
+          "value": "CMake"
+        },
+        {
+          "id": "j9yfwllxn5",
+          "value": "WebAssembly"
+        },
+        {
+          "id": "cntqvp1ywm",
+          "value": "React"
+        },
+        {
+          "id": "f1peengae6",
+          "value": "Next.js"
+        },
+        {
+          "id": "iiq0zy8qvo",
+          "value": "RtMidi"
+        },
+        {
+          "id": "omjbxk8cg7",
+          "value": "VST3 SDK"
+        },
+        {
+          "id": "uphmx2wwqq",
+          "value": "OpenGL"
+        }
+      ],
+      "multipleSelect": true
+    },
+    {
+      "fieldId": "platform",
+      "name": "動作環境",
+      "kind": "select",
+      "required": false,
+      "selectItems": [
+        {
+          "id": "rqrmv4gkbd",
+          "value": "Windows"
+        },
+        {
+          "id": "ula14ikhyo",
+          "value": "macOS"
+        },
+        {
+          "id": "o1u960jjlh",
+          "value": "Linux"
+        },
+        {
+          "id": "caj6w52oas",
+          "value": "Web"
+        },
+        {
+          "id": "4xu4x9kapb",
+          "value": "iOS"
+        },
+        {
+          "id": "mfkr1hx1lg",
+          "value": "VST3"
+        },
+        {
+          "id": "gsoln458wq",
+          "value": "AU"
+        },
+        {
+          "id": "tthmzxxftf",
+          "value": "CLAP"
+        }
+      ],
+      "multipleSelect": true
+    },
+    {
+      "fieldId": "status",
+      "name": "状態",
+      "kind": "select",
+      "required": true,
+      "selectItems": [
+        {
+          "id": "wv4p9v5kn6",
+          "value": "公開中"
+        },
+        {
+          "id": "raau99c410",
+          "value": "開発中"
+        },
+        {
+          "id": "2p1lwaqaby",
+          "value": "アーカイブ"
+        }
+      ],
+      "multipleSelect": false
+    },
+    {
+      "fieldId": "version",
+      "name": "バージョン",
+      "kind": "text",
+      "required": false
+    },
+    {
+      "fieldId": "summary",
+      "name": "一行説明",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "body",
+      "name": "詳細",
+      "kind": "richEditorV2",
+      "required": false
+    },
+    {
+      "fieldId": "links",
+      "name": "リンク",
+      "kind": "repeater",
+      "required": false,
+      "customFieldIds": [
+        "link"
+      ]
+    },
+    {
+      "fieldId": "featured",
+      "name": "ピックアップ",
+      "kind": "boolean",
+      "required": false
+    }
+  ],
+  "customFields": [
+    {
+      "fieldId": "link",
+      "name": "リンク",
+      "fields": [
+        {
+          "fieldId": "platform",
+          "name": "種別",
+          "kind": "select",
+          "required": true,
+          "selectItems": [
+            {
+              "id": "7n5ylj92aa",
+              "value": "Spotify"
+            },
+            {
+              "id": "cnaymn0jud",
+              "value": "Apple Music"
+            },
+            {
+              "id": "b5uk0p6b64",
+              "value": "Bandcamp"
+            },
+            {
+              "id": "qzzp4bnlwx",
+              "value": "YouTube"
+            },
+            {
+              "id": "3xvgysfzzo",
+              "value": "YouTube Music"
+            },
+            {
+              "id": "fiw8wx4vrm",
+              "value": "SoundCloud"
+            },
+            {
+              "id": "5mlotj9uvq",
+              "value": "Beatport"
+            },
+            {
+              "id": "ots39907vb",
+              "value": "LINE MUSIC"
+            },
+            {
+              "id": "bzx0b0lmjr",
+              "value": "ダウンロード"
+            },
+            {
+              "id": "noq6psn6fg",
+              "value": "GitHub"
+            },
+            {
+              "id": "37r5saldja",
+              "value": "ドキュメント"
+            },
+            {
+              "id": "64l9k65jl8",
+              "value": "デモ"
+            },
+            {
+              "id": "d6lc01k6a6",
+              "value": "イベントページ"
+            },
+            {
+              "id": "zrwhvc13y7",
+              "value": "記事"
+            },
+            {
+              "id": "rkomwz4hot",
+              "value": "写真"
+            },
+            {
+              "id": "bgnhvc4j64",
+              "value": "公式サイト"
+            },
+            {
+              "id": "sihawruoq8",
+              "value": "その他"
+            }
+          ],
+          "multipleSelect": false
+        },
+        {
+          "fieldId": "url",
+          "name": "URL",
+          "kind": "text",
+          "required": true
+        },
+        {
+          "fieldId": "label",
+          "name": "表示名の上書き",
+          "kind": "text",
+          "required": false
+        }
+      ],
+      "fieldOrderByColumn": [
+        [
+          "platform",
+          "url",
+          "label"
+        ]
+      ]
+    }
+  ]
+}

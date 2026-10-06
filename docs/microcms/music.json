@@ -1,0 +1,212 @@
+{
+  "apiFields": [
+    {
+      "fieldId": "title",
+      "name": "タイトル",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "alias",
+      "name": "名義",
+      "kind": "relation",
+      "required": true,
+      "referencedApiEndpoint": "alias",
+      "listViewFieldId": "name"
+    },
+    {
+      "fieldId": "date",
+      "name": "リリース日",
+      "kind": "date",
+      "required": true
+    },
+    {
+      "fieldId": "cover",
+      "name": "ジャケット",
+      "kind": "media",
+      "required": true
+    },
+    {
+      "fieldId": "format",
+      "name": "形態",
+      "kind": "select",
+      "required": true,
+      "selectItems": [
+        {
+          "id": "usehpgwbwo",
+          "value": "Single"
+        },
+        {
+          "id": "7quomby4dt",
+          "value": "EP"
+        },
+        {
+          "id": "pwvbvbc3et",
+          "value": "Album"
+        },
+        {
+          "id": "d3fx31ttej",
+          "value": "Compilation"
+        },
+        {
+          "id": "16bcfs6y8l",
+          "value": "Remix"
+        },
+        {
+          "id": "39z3ar28n3",
+          "value": "その他"
+        }
+      ],
+      "multipleSelect": false
+    },
+    {
+      "fieldId": "label",
+      "name": "レーベル",
+      "kind": "text",
+      "required": false
+    },
+    {
+      "fieldId": "catalog",
+      "name": "品番",
+      "kind": "text",
+      "required": false
+    },
+    {
+      "fieldId": "trackCount",
+      "name": "収録曲数",
+      "kind": "number",
+      "required": false
+    },
+    {
+      "fieldId": "body",
+      "name": "解説",
+      "kind": "richEditorV2",
+      "required": false
+    },
+    {
+      "fieldId": "credits",
+      "name": "クレジット",
+      "kind": "textArea",
+      "required": false
+    },
+    {
+      "fieldId": "links",
+      "name": "リンク",
+      "kind": "repeater",
+      "required": false,
+      "customFieldIds": [
+        "link"
+      ]
+    },
+    {
+      "fieldId": "featured",
+      "name": "ピックアップ",
+      "kind": "boolean",
+      "required": false
+    }
+  ],
+  "customFields": [
+    {
+      "fieldId": "link",
+      "name": "リンク",
+      "fields": [
+        {
+          "fieldId": "platform",
+          "name": "種別",
+          "kind": "select",
+          "required": true,
+          "selectItems": [
+            {
+              "id": "q7x5a9b65h",
+              "value": "Spotify"
+            },
+            {
+              "id": "2emjyyz9xy",
+              "value": "Apple Music"
+            },
+            {
+              "id": "nk0xe5vz3q",
+              "value": "Bandcamp"
+            },
+            {
+              "id": "pspyqmopmq",
+              "value": "YouTube"
+            },
+            {
+              "id": "uvbasq89vm",
+              "value": "YouTube Music"
+            },
+            {
+              "id": "kzrwbzbsjq",
+              "value": "SoundCloud"
+            },
+            {
+              "id": "tmev4m6pxx",
+              "value": "Beatport"
+            },
+            {
+              "id": "y9t089s7vt",
+              "value": "LINE MUSIC"
+            },
+            {
+              "id": "i9vlkbb7bt",
+              "value": "ダウンロード"
+            },
+            {
+              "id": "jkfkheyu2h",
+              "value": "GitHub"
+            },
+            {
+              "id": "muapi9joot",
+              "value": "ドキュメント"
+            },
+            {
+              "id": "bfswu66qv2",
+              "value": "デモ"
+            },
+            {
+              "id": "f5u3dstcty",
+              "value": "イベントページ"
+            },
+            {
+              "id": "3gix8z3cqy",
+              "value": "記事"
+            },
+            {
+              "id": "15p4nbcht9",
+              "value": "写真"
+            },
+            {
+              "id": "2lx8ox0t94",
+              "value": "公式サイト"
+            },
+            {
+              "id": "d2l7j0tl0b",
+              "value": "その他"
+            }
+          ],
+          "multipleSelect": false
+        },
+        {
+          "fieldId": "url",
+          "name": "URL",
+          "kind": "text",
+          "required": true
+        },
+        {
+          "fieldId": "label",
+          "name": "表示名の上書き",
+          "kind": "text",
+          "required": false
+        }
+      ],
+      "fieldOrderByColumn": [
+        [
+          "platform",
+          "url",
+          "label"
+        ]
+      ]
+    }
+  ]
+}

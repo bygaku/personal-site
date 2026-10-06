@@ -1,0 +1,218 @@
+{
+  "apiFields": [
+    {
+      "fieldId": "title",
+      "name": "イベント名",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "role",
+      "name": "関わり方",
+      "kind": "select",
+      "required": true,
+      "selectItems": [
+        {
+          "id": "ciea6b81o9",
+          "value": "出演"
+        },
+        {
+          "id": "66v5llloi1",
+          "value": "主催"
+        },
+        {
+          "id": "a13poaw3s7",
+          "value": "主催・出演"
+        },
+        {
+          "id": "iaw4axsa55",
+          "value": "DJ"
+        },
+        {
+          "id": "gww36jbzjm",
+          "value": "ゲスト"
+        },
+        {
+          "id": "ccyojubt4v",
+          "value": "音響・制作"
+        }
+      ],
+      "multipleSelect": false
+    },
+    {
+      "fieldId": "date",
+      "name": "開催日",
+      "kind": "date",
+      "required": true
+    },
+    {
+      "fieldId": "endDate",
+      "name": "終了日",
+      "kind": "date",
+      "required": false
+    },
+    {
+      "fieldId": "venue",
+      "name": "会場",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "area",
+      "name": "エリア",
+      "kind": "text",
+      "required": true
+    },
+    {
+      "fieldId": "alias",
+      "name": "出演名義",
+      "kind": "relationList",
+      "required": false,
+      "referencedApiEndpoint": "alias",
+      "listViewFieldId": "name"
+    },
+    {
+      "fieldId": "cover",
+      "name": "メインビジュアル",
+      "kind": "media",
+      "required": true
+    },
+    {
+      "fieldId": "photos",
+      "name": "写真",
+      "kind": "mediaList",
+      "required": false
+    },
+    {
+      "fieldId": "lineup",
+      "name": "共演",
+      "kind": "textArea",
+      "required": false
+    },
+    {
+      "fieldId": "body",
+      "name": "内容",
+      "kind": "richEditorV2",
+      "required": false
+    },
+    {
+      "fieldId": "links",
+      "name": "リンク",
+      "kind": "repeater",
+      "required": false,
+      "customFieldIds": [
+        "link"
+      ]
+    },
+    {
+      "fieldId": "featured",
+      "name": "ピックアップ",
+      "kind": "boolean",
+      "required": false
+    }
+  ],
+  "customFields": [
+    {
+      "fieldId": "link",
+      "name": "リンク",
+      "fields": [
+        {
+          "fieldId": "platform",
+          "name": "種別",
+          "kind": "select",
+          "required": true,
+          "selectItems": [
+            {
+              "id": "yqp7r4onfi",
+              "value": "Spotify"
+            },
+            {
+              "id": "diag6as43c",
+              "value": "Apple Music"
+            },
+            {
+              "id": "158sm1jet6",
+              "value": "Bandcamp"
+            },
+            {
+              "id": "ucaednycni",
+              "value": "YouTube"
+            },
+            {
+              "id": "c72t4bora0",
+              "value": "YouTube Music"
+            },
+            {
+              "id": "ubxvzmd2e9",
+              "value": "SoundCloud"
+            },
+            {
+              "id": "en0gbxgnot",
+              "value": "Beatport"
+            },
+            {
+              "id": "8zvtj3kxxh",
+              "value": "LINE MUSIC"
+            },
+            {
+              "id": "yndmnkqz87",
+              "value": "ダウンロード"
+            },
+            {
+              "id": "d5aucqxsl4",
+              "value": "GitHub"
+            },
+            {
+              "id": "0sno8502kk",
+              "value": "ドキュメント"
+            },
+            {
+              "id": "aow6fcsi4z",
+              "value": "デモ"
+            },
+            {
+              "id": "mww7csz7i5",
+              "value": "イベントページ"
+            },
+            {
+              "id": "yz5tyxia1j",
+              "value": "記事"
+            },
+            {
+              "id": "pyvi3zhdny",
+              "value": "写真"
+            },
+            {
+              "id": "45muec3u3r",
+              "value": "公式サイト"
+            },
+            {
+              "id": "9l07har8sr",
+              "value": "その他"
+            }
+          ],
+          "multipleSelect": false
+        },
+        {
+          "fieldId": "url",
+          "name": "URL",
+          "kind": "text",
+          "required": true
+        },
+        {
+          "fieldId": "label",
+          "name": "表示名の上書き",
+          "kind": "text",
+          "required": false
+        }
+      ],
+      "fieldOrderByColumn": [
+        [
+          "platform",
+          "url",
+          "label"
+        ]
+      ]
+    }
+  ]
+}
